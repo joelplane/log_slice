@@ -3,6 +3,7 @@ Gem::Specification.new do |s|
   s.version     = '0.1'
   s.authors     = ["Joel Plane"]
   s.email       = ["joel.plane@gmail.com"]
+  s.homepage    = 'https://github.com/joelplane/log_slice'
   s.date        = '2012-08-29'
   s.summary     = "Find a line in a log file"
   s.description = "Find a line in a log file. Uses binary search to find the line quickly in a large log file. Can only search sorted data - which in the case of log file is the timestamp, and probably not much else."

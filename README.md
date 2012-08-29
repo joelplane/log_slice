@@ -5,6 +5,10 @@ Uses binary search to find a line quickly in a large log file. O(log2(n))
 
 Can only search sorted data, which means it's probably only useful for searching by timestamp.
 
+## Installation
+
+    gem install log_slice
+
 ## Example
 
 something-interesting.log:

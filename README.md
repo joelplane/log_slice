@@ -21,21 +21,22 @@ something-interesting.log:
     [2012-08-29 18:42:20] (9640) something something something else 10
 
 extract everything that happened at or after 18:42:18:
+```ruby
+find_date = DateTime.parse("2012-08-29 18:42:18")
+file = LogSlice.new("something-interesting.log").find do |line|
+    date_string = line.match(/^\[([^\]]+)\]/)[1]
+    find_date <=> DateTime.parse(date_string)
+end
 
-    find_date = DateTime.parse("2012-08-29 18:42:18")
-    file = LogSlice.new("something-interesting.log").find do |line|
-        date_string = line.match(/^\[([^\]]+)\]/)[1]
-        find_date <=> DateTime.parse(date_string)
-    end
+# this will yield an instance of File
+# the position is the file is the first byte of the found line
 
-    # this will yield an instance of File
-    # the position is the file is the first byte of the found line
+file.readline
+#=> "[2012-08-29 18:42:18] (9640) something something something else 5"
 
-    file.readline
-    #=> "[2012-08-29 18:42:18] (9640) something something something else 5"
-
-    file.readline
-    #=> "[2012-08-29 18:42:18] (9640) something something something else 6"
+file.readline
+#=> "[2012-08-29 18:42:18] (9640) something something something else 6"
+```
 
 LogSlice.new takes a File or file path, and a block. When passed a line,
 the block must return -1 if the value represented by the line is too high,
@@ -43,7 +44,7 @@ the block must return -1 if the value represented by the line is too high,
 
 ## Limitations
 
-* Can only search sorted data. At the moment, if the data isn't sorting, it won't detect it and it will loop forever.
+* Can only search sorted data. At the moment, if the data isn't sorted, it won't detect it and it will loop forever.
 * Can only search for a known value. For example, searching for 18:42:19 in the example above will yield nothing.
 
 ## Disclaimer

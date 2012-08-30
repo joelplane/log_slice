@@ -4,7 +4,7 @@ require 'helper'
 describe LogSlice do
 
   it "finds the line" do
-    log_slice = LogSlice.new(range_to_file 1..100)
+    log_slice = LogSlice.new(enumerable_to_file 1..100)
     file = log_slice.find do |line|
       42 <=> line.to_i
     end
@@ -22,7 +22,7 @@ describe LogSlice do
 
   it "finds a matching line with log2(lines)+1 calls to comparison function" do
     [100, 10_000, 100_000].each do |total_lines|
-      log_slice = LogSlice.new(range_to_file 1..total_lines)
+      log_slice = LogSlice.new(enumerable_to_file 1..total_lines)
       comparisons_count = 0
       log_slice.find do |line|
         comparisons_count = comparisons_count + 1
@@ -32,18 +32,26 @@ describe LogSlice do
     end
   end
 
-  it "nil when no matching line is found (1)" do
-    log_slice = LogSlice.new(range_to_file 1..100)
+  it "nil when no matching line is found (all values lower)" do
+    log_slice = LogSlice.new(enumerable_to_file 1..100)
     file = log_slice.find do |line|
       1
     end
     file.should be_nil
   end
 
-  it "nil when no matching line is found (2)" do
-    log_slice = LogSlice.new(range_to_file 1..100)
+  it "nil when no matching line is found (all values higher)" do
+    log_slice = LogSlice.new(enumerable_to_file 1..100)
     file = log_slice.find do |line|
       -1
+    end
+    file.should be_nil
+  end
+
+  it "nil when no matching line is found (higher and lower values)" do
+    log_slice = LogSlice.new(enumerable_to_file((1..100).to_a-[42]))
+    file = log_slice.find do |line|
+      42 <=> line.to_i
     end
     file.should be_nil
   end
@@ -57,7 +65,7 @@ describe LogSlice do
   end
 
   it "#each_line_reverse" do
-    log_slice = LogSlice.new(range_to_file 1..10000)
+    log_slice = LogSlice.new(enumerable_to_file 1..10000)
     log_slice.instance_eval { @line_cursor = @size }
     lines = []
     file = log_slice.send(:each_line_reverse) do |line|

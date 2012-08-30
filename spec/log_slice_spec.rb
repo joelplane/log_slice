@@ -75,7 +75,7 @@ describe LogSlice do
 
   it "#each_line_reverse" do
     log_slice = LogSlice.new(enumerable_to_file 1..10000)
-    log_slice.instance_eval { @line_cursor = @size }
+    log_slice.instance_eval { @line_cursor = @file.stat.size }
     lines = []
     file = log_slice.send(:each_line_reverse) do |line|
       lines << line.strip.to_i
@@ -85,7 +85,7 @@ describe LogSlice do
 
   it "#each_line_reverse when file is empty" do
     log_slice = LogSlice.new(string_to_file "")
-    log_slice.instance_eval { @line_cursor = @size }
+    log_slice.instance_eval { @line_cursor = @file.stat.size }
     lines = []
     file = log_slice.send(:each_line_reverse) do |line|
       lines << line.strip.to_i
@@ -95,7 +95,7 @@ describe LogSlice do
 
   it "#each_line_reverse when file has single newline char" do
     log_slice = LogSlice.new(string_to_file "\n")
-    log_slice.instance_eval { @line_cursor = @size }
+    log_slice.instance_eval { @line_cursor = @file.stat.size }
     lines = []
     file = log_slice.send(:each_line_reverse) do |line|
       lines << line.strip.to_i

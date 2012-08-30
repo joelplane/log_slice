@@ -56,6 +56,15 @@ describe LogSlice do
     file.should be_nil
   end
 
+  it "nil when lines are not sorted" do
+    unsorted = [1,99,4,96,7,70,15,67,24,45,30,40]
+    log_slice = LogSlice.new(enumerable_to_file(unsorted))
+    file = log_slice.find do |line|
+      42 <=> line.to_i
+    end
+    file.should be_nil
+  end
+
   it "nil when acting on an empty file" do
     log_slice = LogSlice.new(string_to_file "")
     file = log_slice.find do |line|

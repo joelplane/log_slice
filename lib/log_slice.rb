@@ -1,4 +1,5 @@
 require File.expand_path("log_slice/search_boundary", File.dirname(__FILE__))
+require File.expand_path("log_slice/date_range", File.dirname(__FILE__))
 
 class LogSlice
 

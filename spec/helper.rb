@@ -4,7 +4,7 @@ RSpec.configure do |c|
   c.include(Module.new do
 
     def enumerable_to_file range
-      file = Tempfile.new("test-#{range}")
+      file = Tempfile.new("test-enum")
       file.write(range.to_a.join("\n"))
       file.flush
       file.seek(0)

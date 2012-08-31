@@ -1,17 +1,25 @@
 #!/usr/bin/env ruby
 require 'date'
 require File.expand_path("../lib/log_slice", File.dirname(__FILE__))
-find_date = begin
-  DateTime.parse(ARGV[0])
-rescue
-  $stderr.puts "USAGE:   #{$0} DATE FILEPATH\n\n"
-  $stderr.puts "EXAMPLE: #{$0} '2012-08-31 12:00:00' /tmp/something.log\n\n"
+if ARGV.length < 2
+  $stderr.puts "USAGE:   #{$0} DATE [END_DATE] FILEPATH\n\n"
+  $stderr.puts "EXAMPLE: #{$0} '2012-08-31 12:00:00' /tmp/something.log\n"
+  $stderr.puts "EXAMPLE: #{$0} '2012-08-31 12:00:00' '2012-08-31 12:05:00' /tmp/something.log\n"
   $stderr.puts "Expects log lines to contain a DateTime string enclosed in [square brackets] \n\n"
-  $stderr.puts "Could not parse date argument\n\n"
-  raise
 end
-file = LogSlice.new(ARGV[1]).find do |line|
-    date_string = line.match(/\[([^\]]+)\]/)[1]
-    find_date <=> DateTime.parse(date_string)
+
+start_date = ARGV[0]
+(end_date, file) = begin
+  if ARGV.length == 2
+    [nil, ARGV[1]]
+  else
+    [ARGV[1], ARGV[2]]
+  end
 end
-puts file.readline until file.eof?
+
+begin
+  LogSlice::DateRange.new(file, start_date, end_date).each do |line|
+    puts line
+  end
+rescue Errno::EPIPE
+end

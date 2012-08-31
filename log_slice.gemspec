@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'log_slice'
-  s.version     = '0.3'
+  s.version     = '0.4'
   s.authors     = ["Joel Plane"]
   s.email       = ["joel.plane@gmail.com"]
   s.homepage    = 'https://github.com/joelplane/log_slice'

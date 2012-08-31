@@ -12,6 +12,7 @@ class LogSlice
       @lower = 0
       @upper = @file_size
       @cursor = 0
+      cursor_forward
       self
     end
 

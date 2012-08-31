@@ -24,9 +24,9 @@ something-interesting.log:
     [2012-08-29 18:42:20] (9640) 9  something something something else 9
     [2012-08-29 18:42:20] (9640) 10 something something something else 10
 
-extract everything that happened at or after 18:42:18:
+extract everything that happened at or after 18:42:00:
 ```ruby
-find_date = DateTime.parse("2012-08-29 18:42:18")
+find_date = DateTime.parse("2012-08-29 18:42:00")
 file = LogSlice.new("something-interesting.log").find do |line|
     date_string = line.match(/^\[([^\]]+)\]/)[1]
     find_date <=> DateTime.parse(date_string)
@@ -55,11 +55,9 @@ LogSlice.new(file_or_file_path).find(&comparison_function) #=> File or nil
 
 ## Limitations
 
-* Can only search sorted data. At the moment, if the data isn't sorted, it will most likely not find anything
-  (ie return nil). In very rare cases it may find value the anyway by chance, so it's not guaranteed that unsorted
-  input will yield nil.
-* Can only search for a known value. For example, searching for 18:42:19 in the example above will yield nothing.
-  This severely limits usefulness, and should be addressed.
+* Can only search sorted data. If the data isn't sorted, it will most likely not find anything (ie return nil).
+  In very rare cases it may find value the anyway by chance, so it's not guaranteed that unsorted
+  input will always yield nil.
 
 ## Disclaimer
 

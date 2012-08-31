@@ -6,8 +6,10 @@ class LogSlice
   NEWLINE_CHAR = "\n"[0]
 
   # @param log_file [File, String]
-  def initialize log_file
+  # @param options [Hash] :exact_match default false
+  def initialize log_file, options={}
     @file = log_file.respond_to?(:seek) ? log_file : File.open(log_file, 'r')
+    @exact_match = options[:exact_match] || false
     @search_boundary = SearchBoundary.new(@file.stat.size)
     @line_cursor = nil
   end
@@ -34,7 +36,12 @@ class LogSlice
         line = find_next_newline
       end
     end
-    nil
+    if @exact_match
+      nil
+    else
+      backtrack_to_gap compare
+      return @file.eof? ? nil : @file
+    end
   end
 
   private
@@ -69,6 +76,21 @@ class LogSlice
     @file.seek(@line_cursor)
   end
 
+  # if no match was found, we're sitting at too-high.
+  # backtrack up to the first too-high
+  def backtrack_to_gap compare
+    @line_cursor = @file.pos
+    previous_cursor_position = @line_cursor
+    each_line_reverse do |line|
+      if compare.call(line) == 1
+        @line_cursor = previous_cursor_position
+        break
+      end
+      previous_cursor_position = @line_cursor
+    end
+    @file.seek(@line_cursor)
+  end
+
   # iterate over each line from the current cursor position, in reverse.
   def each_line_reverse
     chunk_size = 512
@@ -93,6 +115,7 @@ class LogSlice
       left_over = lines[0] || ""
       lines = []
     end
+    @line_cursor -= (left_over.length + NEWLINE.length)
     yield left_over unless left_over == ''
   end
 
